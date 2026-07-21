@@ -1,248 +1,144 @@
-var canvas = document.getElementById("starfield");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// ---------- confetti burst ----------
+const confettiCanvas = document.getElementById("confetti-canvas");
+const ctx = confettiCanvas.getContext("2d");
+confettiCanvas.width = window.innerWidth;
+confettiCanvas.height = window.innerHeight;
 
-var context = canvas.getContext("2d");
-var stars = 500;
-var colorrange = [0, 60, 240];
-var starArray = [];
+window.addEventListener("resize", () => {
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+});
 
-function getRandom(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+const confettiColors = ["#FF3D8A", "#FFDD4A", "#6EE7C0", "#C9B8FF", "#A3E8FF"];
+
+function burstConfetti() {
+  const pieces = Array.from({ length: 120 }, () => ({
+    x: confettiCanvas.width / 2,
+    y: confettiCanvas.height / 3,
+    vx: (Math.random() - 0.5) * 14,
+    vy: Math.random() * -12 - 4,
+    size: Math.random() * 8 + 4,
+    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+    rotation: Math.random() * 360,
+    spin: (Math.random() - 0.5) * 20,
+    life: 0,
+  }));
+
+  const gravity = 0.35;
+  const maxLife = 130;
+
+  function frame() {
+    ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    let alive = false;
+
+    pieces.forEach((p) => {
+      if (p.life > maxLife) return;
+      alive = true;
+      p.vy += gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.spin;
+      p.life += 1;
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, 1 - p.life / maxLife);
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      ctx.restore();
+    });
+
+    if (alive) requestAnimationFrame(frame);
+    else ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  }
+
+  requestAnimationFrame(frame);
 }
 
-// Initialize stars with random opacity values
-for (var i = 0; i < stars; i++) {
-    var x = Math.random() * canvas.offsetWidth;
-    var y = Math.random() * canvas.offsetHeight;
-    var radius = Math.random() * 1.2;
-    var hue = colorrange[getRandom(0, colorrange.length - 1)];
-    var sat = getRandom(50, 100);
-    var opacity = Math.random();
-    starArray.push({ x, y, radius, hue, sat, opacity });
+// ---------- note reveal ----------
+const note = document.getElementById("note");
+const noteText = note.querySelector(".note-text");
+
+const messageLines = [
+  "okay but real talk for a sec 🥹",
+  "",
+  "out of everyone I've ever fought with,",
+  "you're genuinely my favorite person to",
+  "argue with. weird flex but true.",
+  "",
+  "so happy almost-birthday to the one",
+  "person who can out-debate me, out-math",
+  "me, and out-shine every room she walks into.",
+  "",
+  "go check ur email, I wrote u something too 👀",
+].join("\n");
+
+function revealNote() {
+  noteText.textContent = messageLines;
+  note.hidden = false;
+  requestAnimationFrame(() => note.classList.add("show"));
+  note.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
-var frameNumber = 0;
-var opacity = 0;
-var secondOpacity = 0;
-var thirdOpacity = 0;
-
-var baseFrame = context.getImageData(0, 0, window.innerWidth, window.innerHeight);
-
-function drawStars() {
-    for (var i = 0; i < stars; i++) {
-        var star = starArray[i];
-
-        context.beginPath();
-        context.arc(star.x, star.y, star.radius, 0, 360);
-        context.fillStyle = "hsla(" + star.hue + ", " + star.sat + "%, 88%, " + star.opacity + ")";
-        context.fill();
-    }
-}
-
-function updateStars() {
-    for (var i = 0; i < stars; i++) {
-        if (Math.random() > 0.99) {
-            starArray[i].opacity = Math.random();
-        }
-    }
-}
-
+// ---------- quiz + note + email flow ----------
 const button = document.getElementById("valentinesButton");
+const quiz = document.getElementById("quiz");
+const quizFeedback = quiz.querySelector(".quiz-feedback");
+const quizOptions = quiz.querySelectorAll(".quiz-option");
+const CORRECT_ANSWER = "16";
 
-button.addEventListener("click", async () => {
-    if (button.textContent === "Click Me! 🎉") {
-        button.textContent = "loading...";
-        button.disabled = true;
-        try {
-            const response = await fetch('/api/send-mail', { method: 'GET' });
-            const text = await response.text();
-            const success = response.ok && text.trim().toLowerCase().includes('message has been sent');
+let emailSent = false;
 
-            if (success) {
-                console.log('Send mail success:', text);
-                button.textContent = "Check Your Email 🎂";
-            } else {
-                console.error('Failed to send email', response.status, text);
-                button.textContent = "Error 😞";
-                alert('Error sending email:\n' + text);
-            }
-        } catch (error) {
-            console.error('Network or other error:', error);
-            button.textContent = "Error 😞";
-            alert('Network error: ' + (error && error.message ? error.message : error));
-        } finally {
-            button.disabled = false;
-        }
-    }
+button.addEventListener("click", () => {
+  if (button.textContent === "unwrap ur bday msg 🎁") {
+    quiz.hidden = false;
+    button.textContent = "answer to unlock 👇";
+    button.disabled = true;
+    quiz.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
 });
 
-function drawText() {
-    var fontSize = Math.min(30, window.innerWidth / 24); // Adjust font size based on screen width
-    var lineHeight = 8;
+async function sendBirthdayEmail() {
+  if (emailSent) return;
+  emailSent = true;
+  try {
+    const response = await fetch('/api/send-mail', { method: 'GET' });
+    const text = await response.text();
+    const success = response.ok && text.trim().toLowerCase().includes('message has been sent');
 
-    context.font = fontSize + "px Comic Sans MS";
-    context.textAlign = "center";
-    
-    // glow effect
-    context.shadowColor = "rgba(45, 45, 255, 1)";
-    context.shadowBlur = 8;
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
-
-    if(frameNumber < 250){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("everyday I cannot believe how lucky I am to have a best friend like you", canvas.width/2, canvas.height/2);
-        opacity = opacity + 0.01;
+    if (success) {
+      console.log('Send mail success:', text);
+      button.textContent = "check ur email 🎂";
+    } else {
+      console.error('Failed to send email', response.status, text);
+      button.textContent = "oops, error 😞";
+      alert('Error sending email:\n' + text);
     }
-    //fades out the text by decreasing the opacity
-    if(frameNumber >= 250 && frameNumber < 500){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("everyday I cannot believe how lucky I am to have a best friend like you", canvas.width/2, canvas.height/2);
-        opacity = opacity - 0.01;
-    }
-
-    //needs this if statement to reset the opacity before next statement on canvas
-    if(frameNumber == 500){
-        opacity = 0;
-    }
-    if(frameNumber > 500 && frameNumber < 750){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-
-        if (window.innerWidth < 600) {           //shortens long sentence for mobile screens
-            drawTextWithLineBreaks(["amongst trillions and trillions of stars,", "over billions of years"], canvas.width / 2, canvas.height / 2, fontSize, lineHeight);
-        } else {
-            context.fillText("amongst trillions and trillions of stars, over billions of years", canvas.width/2, canvas.height/2);
-        }
-
-        opacity = opacity + 0.01;
-    }
-    if(frameNumber >= 750 && frameNumber < 1000){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        
-        if (window.innerWidth < 600) {
-            drawTextWithLineBreaks(["amongst trillions and trillions of stars,", "over billions of years"], canvas.width / 2, canvas.height / 2, fontSize, lineHeight);
-        } else {
-            context.fillText("amongst trillions and trillions of stars, over billions of years", canvas.width/2, canvas.height/2);
-        }
-
-        opacity = opacity - 0.01;
-    }
-
-    if(frameNumber == 1000){
-        opacity = 0;
-    }
-    if(frameNumber > 1000 && frameNumber < 1250){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("to be alive, and to have you as my partner in crime", canvas.width/2, canvas.height/2);
-        opacity = opacity + 0.01;
-    }
-    if(frameNumber >= 1250 && frameNumber < 1500){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("to be alive, and to have you as my partner in crime", canvas.width/2, canvas.height/2);
-        opacity = opacity - 0.01;
-    }
-
-    if(frameNumber == 1500){
-        opacity = 0;
-    }
-    if(frameNumber > 1500 && frameNumber < 1750){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("is so incredibly, unfathomably lucky", canvas.width/2, canvas.height/2);
-        opacity = opacity + 0.01;
-    }
-    if(frameNumber >= 1750 && frameNumber < 2000){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("is so incredibly, unfathomably lucky", canvas.width/2, canvas.height/2);
-        opacity = opacity - 0.01;
-    }
-
-    if(frameNumber == 2000){
-        opacity = 0;
-    }
-    if(frameNumber > 2000 && frameNumber < 2250){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-
-        if (window.innerWidth < 600) {
-            drawTextWithLineBreaks(["and yet here I am, getting to argue with", "the smartest math genius I know"], canvas.width / 2, canvas.height / 2, fontSize, lineHeight);
-        } else {
-            context.fillText("and yet here I am, getting to argue with the smartest math genius I know", canvas.width/2, canvas.height/2);
-        }
-
-        opacity = opacity + 0.01;
-    }
-    if(frameNumber >= 2250 && frameNumber < 2500){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-
-        if (window.innerWidth < 600) {
-            drawTextWithLineBreaks(["and yet here I am, getting to argue with", "the smartest math genius I know"], canvas.width / 2, canvas.height / 2, fontSize, lineHeight);
-        } else {
-            context.fillText("and yet here I am, getting to argue with the smartest math genius I know", canvas.width/2, canvas.height/2);
-        }
-        
-        opacity = opacity - 0.01;
-    }
-
-    if(frameNumber == 2500){
-        opacity = 0;
-    }
-    if(frameNumber > 2500 && frameNumber < 99999){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-
-        if (window.innerWidth < 600) {
-            drawTextWithLineBreaks(["Happy (almost) Birthday Little Pixie,", "main character of every story you're in"], canvas.width / 2, canvas.height / 2, fontSize, lineHeight);
-        } else {
-            context.fillText("Happy (almost) Birthday Little Pixie, main character of every story you're in", canvas.width/2, canvas.height/2);
-        }
-
-        opacity = opacity + 0.01;
-    }
-    
-    if(frameNumber >= 2750 && frameNumber < 99999){
-        context.fillStyle = `rgba(45, 45, 255, ${secondOpacity})`;
-
-
-        if (window.innerWidth < 600) {
-            drawTextWithLineBreaks(["here's to more arguments you'll definitely lose,", "more equations you'll definitely win"], canvas.width / 2, (canvas.height/2 + 60), fontSize, lineHeight);
-        } else {
-            context.fillText("here's to more arguments you'll definitely lose, more equations you'll definitely win", canvas.width/2, (canvas.height/2 + 50));
-        }
-
-        secondOpacity = secondOpacity + 0.01;
-    }
-
-    if(frameNumber >= 3000 && frameNumber < 99999){
-        context.fillStyle = `rgba(45, 45, 255, ${thirdOpacity})`;
-        context.fillText("Happy Birthday Little Pixie 🎉", canvas.width/2, (canvas.height/2 + 120));
-        thirdOpacity = thirdOpacity + 0.01;
-
-        button.style.display = "block";
-    }   
-
-     // Reset the shadow effect after drawing the text
-     context.shadowColor = "transparent";
-     context.shadowBlur = 0;
-     context.shadowOffsetX = 0;
-     context.shadowOffsetY = 0;
+  } catch (error) {
+    console.error('Network or other error:', error);
+    button.textContent = "oops, error 😞";
+    alert('Network error: ' + (error && error.message ? error.message : error));
+  }
 }
 
-function draw() {
-    context.putImageData(baseFrame, 0, 0);
+quizOptions.forEach((opt) => {
+  opt.addEventListener("click", async () => {
+    if (opt.dataset.value === CORRECT_ANSWER) {
+      quizOptions.forEach((o) => (o.disabled = true));
+      opt.classList.add("correct");
+      quizFeedback.textContent = "✅ correct! ur a genius fr, sending ur gift... 🎁";
 
-    drawStars();
-    updateStars();
-    drawText();
-
-    if (frameNumber < 99999) {
-        frameNumber++;
+      burstConfetti();
+      revealNote();
+      button.textContent = "sending...";
+      await sendBirthdayEmail();
+    } else {
+      opt.classList.add("wrong");
+      quiz.classList.remove("shake");
+      void quiz.offsetWidth; // restart animation
+      quiz.classList.add("shake");
+      quizFeedback.textContent = "❌ not quite bestie, try again";
     }
-    window.requestAnimationFrame(draw);
-}
-
-window.addEventListener("resize", function () {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    baseFrame = context.getImageData(0, 0, window.innerWidth, window.innerHeight);
+  });
 });
-
-window.requestAnimationFrame(draw);

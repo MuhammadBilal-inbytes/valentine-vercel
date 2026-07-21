@@ -3,14 +3,97 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="https://raw.githubusercontent.com/sojijr/valentine-website/main/public/images/favicon.png">
-    <link rel="icon" href="public/images/favicon.png" type="image/x-icon" />  
     <title>Happy Birthday Little Pixie</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="public/style.css">
   </head>
   <body>
-    <canvas id="starfield"></canvas>
-    <button id="valentinesButton">Click Me! 🎉</button>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="sky">
+      <span class="sticker s1" aria-hidden="true">✨</span>
+      <span class="sticker s2" aria-hidden="true">💖</span>
+      <span class="sticker s3" aria-hidden="true">🎀</span>
+      <span class="sticker s4" aria-hidden="true">⭐</span>
+      <span class="sticker s5" aria-hidden="true">🌸</span>
+      <span class="sticker s6" aria-hidden="true">💫</span>
+      <span class="sticker s7" aria-hidden="true">🩷</span>
+    </div>
+
+    <main class="page">
+
+      <header class="hero">
+        <p class="eyebrow">🔔 unofficial pre-birthday notice</p>
+        <h1 class="title">hii <span class="highlight">little pixie</span> 🎀</h1>
+        <p class="subtitle">shhh, it's a surprise. scroll down.</p>
+      </header>
+
+      <section class="corkboard" aria-label="memories">
+
+        <figure class="polaroid rot-a">
+          <div class="photo-slot">
+            <img src="public/images/pixie-1.jpeg" alt="" onerror="this.style.display='none'; this.parentElement.classList.add('placeholder')">
+          </div>
+          <figcaption>the argument you started over nothing 💀</figcaption>
+        </figure>
+
+        <figure class="polaroid rot-b">
+          <div class="photo-slot">
+            <img src="public/images/pixie-2.jpeg" alt="" onerror="this.style.display='none'; this.parentElement.classList.add('placeholder')">
+          </div>
+          <figcaption>certified math genius fr fr</figcaption>
+        </figure>
+
+        <figure class="polaroid rot-c">
+          <div class="photo-slot">
+            <img src="public/images/pixie-3.jpeg" alt="" onerror="this.style.display='none'; this.parentElement.classList.add('placeholder')">
+          </div>
+          <figcaption>main character energy, 24/7 🎬</figcaption>
+        </figure>
+
+        <figure class="polaroid rot-d">
+          <div class="photo-slot">
+            <img src="public/images/pixie-4.jpeg" alt="" onerror="this.style.display='none'; this.parentElement.classList.add('placeholder')">
+          </div>
+          <figcaption>the day you "won" the debate 🙄</figcaption>
+        </figure>
+
+        <div class="tape tape-1" aria-hidden="true"></div>
+        <div class="tape tape-2" aria-hidden="true"></div>
+        <div class="tape tape-3" aria-hidden="true"></div>
+
+      </section>
+
+      <div class="cta-wrap">
+        <button id="valentinesButton">unwrap ur bday msg 🎁</button>
+      </div>
+
+      <div class="reveal-wrap">
+
+        <div id="quiz" class="quiz" hidden>
+          <p class="quiz-label">prove ur a math genius first 🧠</p>
+          <p class="quiz-expression">7 + 3 × (10 − 4) ÷ 2 = ?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="30">30</button>
+            <button class="quiz-option" data-value="16">16</button>
+            <button class="quiz-option" data-value="13">13</button>
+            <button class="quiz-option" data-value="20">20</button>
+          </div>
+          <p class="quiz-feedback"></p>
+        </div>
+
+        <div id="note" class="note" hidden>
+          <div class="pin" aria-hidden="true">📌</div>
+          <p class="note-text"></p>
+        </div>
+
+      </div>
+
+    </main>
+
     <script src="script.js"></script>
   </body>
 </html>

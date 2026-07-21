@@ -1,34 +1,357 @@
-html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden;
-    cursor: url('./images/pointer.png'), auto;
+:root {
+  --bg-1: #ffd3e8;
+  --bg-2: #c9b8ff;
+  --bg-3: #a3e8ff;
+  --paper: #fffcf5;
+  --ink: #33203f;
+  --ink-soft: #6b5a78;
+  --pop: #ff3d8a;
+  --sun: #ffdd4a;
+  --mint: #6ee7c0;
+  --tape: rgba(255, 255, 255, 0.55);
+
+  --font-display: 'Bungee', system-ui, sans-serif;
+  --font-hand: 'Caveat', cursive;
+  --font-body: 'Poppins', system-ui, sans-serif;
 }
 
-canvas {
-    width: 100%;
-    height: auto;
-    background: #111;
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: var(--font-body);
+  color: var(--ink);
+  cursor: url('./images/pointer.png'), auto;
+}
+
+body {
+  background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-3) 100%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  position: relative;
+}
+
+#confetti-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* floating stickers */
+.sky {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sticker {
+  position: absolute;
+  font-size: 34px;
+  opacity: 0.75;
+  animation: bob 6s ease-in-out infinite;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
+}
+
+.s1 { top: 8%;  left: 6%;  animation-delay: 0s; }
+.s2 { top: 18%; left: 88%; animation-delay: 1s; font-size: 28px; }
+.s3 { top: 70%; left: 4%;  animation-delay: 2s; }
+.s4 { top: 4%;  left: 45%; animation-delay: 0.5s; font-size: 26px; }
+.s5 { top: 85%; left: 82%; animation-delay: 1.5s; }
+.s6 { top: 40%; left: 92%; animation-delay: 2.5s; font-size: 24px; }
+.s7 { top: 60%; left: 50%; animation-delay: 3s; font-size: 22px; }
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50%      { transform: translateY(-18px) rotate(6deg); }
+}
+
+.page {
+  position: relative;
+  z-index: 2;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 56px 24px 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* hero */
+.eyebrow {
+  font-family: var(--font-hand);
+  font-size: 22px;
+  color: var(--ink-soft);
+  margin: 0 0 6px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 6vw, 58px);
+  line-height: 1.15;
+  margin: 0 0 12px;
+  color: var(--ink);
+  text-shadow: 3px 3px 0 var(--sun);
+}
+
+.title .highlight {
+  color: var(--pop);
+  text-shadow: 3px 3px 0 var(--mint);
+}
+
+.subtitle {
+  font-family: var(--font-hand);
+  font-size: 24px;
+  color: var(--ink-soft);
+  margin: 0 0 40px;
+}
+
+/* corkboard + polaroids */
+.corkboard {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  min-height: 600px;
+  margin-bottom: 44px;
+}
+
+.polaroid {
+  position: absolute;
+  width: 220px;
+  background: var(--paper);
+  padding: 14px 14px 26px;
+  border-radius: 4px;
+  box-shadow: 0 12px 24px rgba(43, 20, 60, 0.18);
+  transition: transform 0.25s ease;
+}
+
+.polaroid:hover {
+  transform: scale(1.05) rotate(0deg) !important;
+  z-index: 10;
+}
+
+.photo-slot {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #ece4f5;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.photo-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-slot.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(45deg, #ece4f5, #ece4f5 10px, #e2d6f0 10px, #e2d6f0 20px);
+}
+
+.photo-slot.placeholder::after {
+  content: "+ add photo";
+  font-family: var(--font-hand);
+  font-size: 20px;
+  color: var(--ink-soft);
+}
+
+.polaroid figcaption {
+  font-family: var(--font-hand);
+  font-size: 20px;
+  line-height: 1.25;
+  margin-top: 10px;
+  color: var(--ink);
+}
+
+.rot-a { top: 0;    left: 20px;  transform: rotate(-7deg); }
+.rot-b { top: 40px; right: 10px; transform: rotate(6deg); }
+.rot-c { top: 260px; left: 60px; transform: rotate(4deg); }
+.rot-d { top: 300px; right: 50px; transform: rotate(-5deg); }
+
+.tape {
+  position: absolute;
+  width: 90px;
+  height: 28px;
+  background: var(--tape);
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.tape-1 { top: -14px;  left: 60px;  transform: rotate(-8deg); }
+.tape-2 { top: 26px;   right: 40px; transform: rotate(10deg); }
+.tape-3 { top: 246px;  left: 100px; transform: rotate(-4deg); }
+
+/* CTA */
+.cta-wrap {
+  margin-top: 70px;
 }
 
 #valentinesButton {
-    display: none;
-    position: absolute;
-    background-color: #2d2dff;
-    border: 2px solid #2d2dff;
-    color: #fff;
-    cursor: pointer;
-    height: 50px;
-    font-size: 16px;
-    font-family: "Comic Sans MS", cursive, sans-serif;
-    border-radius: 10px;
-    top: calc(50% + 150px); /* Adjust based on canvas height and text position */
-    left: 50%;
-    transform: translateX(-50%);
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-  }
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--paper);
+  background: var(--pop);
+  border: none;
+  padding: 18px 34px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 8px 0 #c22a6e, 0 14px 24px rgba(255, 61, 138, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
 
-  #valentinesButton:hover {
-    background-color: #1f1faa;
-    color: #eee;
+#valentinesButton:hover {
+  transform: translateY(-2px) rotate(-1deg);
+}
+
+#valentinesButton:active {
+  transform: translateY(4px);
+  box-shadow: 0 4px 0 #c22a6e, 0 8px 16px rgba(255, 61, 138, 0.35);
+}
+
+#valentinesButton:disabled {
+  opacity: 0.75;
+  cursor: default;
+}
+
+/* quiz + note reveal layout */
+.reveal-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 28px;
+  margin-top: 46px;
+  width: 100%;
+}
+
+.quiz {
+  max-width: 340px;
+  background: var(--mint);
+  color: var(--ink);
+  padding: 28px 26px 24px;
+  border-radius: 14px;
+  box-shadow: 0 16px 30px rgba(43, 20, 60, 0.22);
+  transform: rotate(2deg);
+}
+
+.quiz.shake {
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(2deg) translateX(0); }
+  25%      { transform: rotate(2deg) translateX(-8px); }
+  75%      { transform: rotate(2deg) translateX(8px); }
+}
+
+.quiz-label {
+  font-family: var(--font-hand);
+  font-size: 20px;
+  margin: 0 0 6px;
+}
+
+.quiz-expression {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.4;
+  margin: 0 0 18px;
+  color: var(--ink);
+}
+
+.quiz-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.quiz-option {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 16px;
+  padding: 12px 0;
+  border: none;
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.quiz-option:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: var(--sun);
+}
+
+.quiz-option:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.quiz-option.correct {
+  background: var(--pop);
+  color: var(--paper);
+}
+
+.quiz-option.wrong {
+  background: #ffb4b4;
+}
+
+.quiz-feedback {
+  font-family: var(--font-hand);
+  font-size: 20px;
+  margin: 14px 0 0;
+  min-height: 26px;
+}
+
+/* pinned note reveal */
+.note {
+  max-width: 340px;
+  background: var(--sun);
+  color: var(--ink);
+  padding: 34px 30px 26px;
+  border-radius: 6px;
+  position: relative;
+  box-shadow: 0 16px 30px rgba(43, 20, 60, 0.22);
+  transform: rotate(-2deg) translateY(30px) scale(0.9);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(.2,1.4,.4,1), opacity 0.4s ease;
+}
+
+.note.show {
+  opacity: 1;
+  transform: rotate(-2deg) translateY(0) scale(1);
+}
+
+.note .pin {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 32px;
+}
+
+.note-text {
+  font-family: var(--font-hand);
+  font-size: 24px;
+  line-height: 1.4;
+  margin: 0;
+  white-space: pre-line;
+}
+
+@media (max-width: 640px) {
+  .corkboard { min-height: 700px; }
+  .polaroid { width: 170px; }
+  .rot-c { top: 300px; }
+  .rot-d { top: 340px; }
 }
