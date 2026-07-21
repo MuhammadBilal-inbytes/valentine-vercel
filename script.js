@@ -61,17 +61,28 @@ const note = document.getElementById("note");
 const noteText = note.querySelector(".note-text");
 
 const messageLines = [
-  "okay but real talk for a sec 🥹",
+  "okay funny stuff first, real talk after 😭",
   "",
-  "out of everyone I've ever fought with,",
-  "you're genuinely my favorite person to",
-  "argue with. weird flex but true.",
+  "you spam \"ma dumb aaa😭😭😭😭😭\" more than any",
+  "human alive, and somehow still ace maths, forget",
+  "NOR gates exist, and out-argue literally everyone.",
+  "make it make sense",
   "",
-  "so happy almost-birthday to the one",
-  "person who can out-debate me, out-math",
-  "me, and out-shine every room she walks into.",
+  "also the second I say ONE thing wrong you go",
+  "straight to \"Muhammad Bilal grow up\" like my own",
+  "mother. scary. respect it tho",
   "",
-  "go check ur email, I wrote u something too 👀",
+  "remember the 200rs rickshaw era? \"young dumb\" era?",
+  "ngl we peaked that day",
+  "",
+  "okay fr now: for someone who calls herself dumb",
+  "every single day, you've quietly been one of the",
+  "best parts of this whole year, no cap",
+  "",
+  "happy (almost) birthday, certified icon and",
+  "24/7 self-proclaimed dumb genius 😭🎂",
+  "",
+  "go check ur email, wrote u something there too 👀",
 ].join("\n");
 
 function revealNote() {
