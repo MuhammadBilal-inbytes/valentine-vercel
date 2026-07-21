@@ -15,8 +15,8 @@ module.exports = async (req, res) => {
     await transporter.sendMail({
       from: `"Bilal Abbasi" <${process.env.SMTP_USER}>`,
       to: process.env.TO_EMAIL, // recipient address (set in Vercel dashboard)
-      subject: 'I Love You',
-      html: 'Happy Valentine Day My Love. I love you so much. You are the best thing that has ever happened to me ❤',
+      subject: 'Happy (Pre) Birthday Little Pixie 🎉',
+      html: 'Happy Birthday soon, Little Pixie! Thanks for all the arguments I somehow always lose, for being scary good at math, and for having main character energy 24/7. You make life way more fun. Here\'s to another year of chaos and debates 🎂',
     });
 
     res.status(200).send('Message has been sent');
