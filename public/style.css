@@ -1,14 +1,14 @@
 :root {
-  --bg-1: #ffd3e8;
-  --bg-2: #c9b8ff;
-  --bg-3: #a3e8ff;
-  --paper: #fffcf5;
-  --ink: #33203f;
-  --ink-soft: #6b5a78;
-  --pop: #ff3d8a;
-  --sun: #ffdd4a;
-  --mint: #6ee7c0;
-  --tape: rgba(255, 255, 255, 0.55);
+  --bg-1: #f2e6da;
+  --bg-2: #d9c3b4;
+  --bg-3: #8f7f8c;
+  --paper: #fdf6ec;
+  --ink: #3a2a22;
+  --ink-soft: #6b5a4e;
+  --pop: #b5555f;
+  --sun: #d9a441;
+  --mint: #8ea77a;
+  --tape: rgba(255, 250, 240, 0.55);
 
   --font-display: 'Bungee', system-ui, sans-serif;
   --font-hand: 'Caveat', cursive;
@@ -29,7 +29,7 @@ html, body {
 }
 
 body {
-  background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-3) 100%);
+  background: radial-gradient(circle at 50% 25%, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
   background-attachment: fixed;
   overflow-x: hidden;
   position: relative;
@@ -140,7 +140,7 @@ body {
 .photo-slot {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #ece4f5;
+  background: #e8dcc9;
   overflow: hidden;
   border-radius: 2px;
 }
@@ -156,7 +156,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: repeating-linear-gradient(45deg, #ece4f5, #ece4f5 10px, #e2d6f0 10px, #e2d6f0 20px);
+  background: repeating-linear-gradient(45deg, #e8dcc9, #e8dcc9 10px, #ddccae 10px, #ddccae 20px);
 }
 
 .photo-slot.placeholder::after {
@@ -206,7 +206,7 @@ body {
   padding: 18px 34px;
   border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 8px 0 #c22a6e, 0 14px 24px rgba(255, 61, 138, 0.35);
+  box-shadow: 0 8px 0 #8a3d45, 0 14px 24px rgba(181, 85, 95, 0.35);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -216,7 +216,7 @@ body {
 
 #valentinesButton:active {
   transform: translateY(4px);
-  box-shadow: 0 4px 0 #c22a6e, 0 8px 16px rgba(255, 61, 138, 0.35);
+  box-shadow: 0 4px 0 #8a3d45, 0 8px 16px rgba(181, 85, 95, 0.35);
 }
 
 #valentinesButton:disabled {
@@ -304,7 +304,7 @@ body {
 }
 
 .quiz-option.wrong {
-  background: #ffb4b4;
+  background: #d99b93;
 }
 
 .quiz-feedback {
